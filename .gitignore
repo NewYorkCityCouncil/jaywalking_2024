@@ -5,3 +5,5 @@
 .Ruserdata
 .env
 .venv*
+data/input/CrashData_test_6478750435646127290.csv
+data/input/Traffic_Accidents_(Offenses).geojson
