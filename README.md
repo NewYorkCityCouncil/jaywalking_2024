@@ -1,5 +1,5 @@
 ### Jaywalking Analysis 2024
-Data analysis for Int 0346-2024 ['Pedestrian crossing guidelines and right of way.'](https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=6557803&GUID=7D6F4CEC-85C3-4E00-9E54-36641179493B&Options=&Search=).
+Data analysis for Int 0346-2024 ['Pedestrian crossing guidelines and right of way'](https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=6557803&GUID=7D6F4CEC-85C3-4E00-9E54-36641179493B&Options=&Search=).
 
 ***  
 
