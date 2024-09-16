@@ -1,5 +1,5 @@
 ### Jaywalking Analysis 2024
-Data analysis for Int 0346-2024 ['Pedestrian crossing guidelines and right of way'](https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=6557803&GUID=7D6F4CEC-85C3-4E00-9E54-36641179493B&Options=&Search=).
+Data analysis for Int 0346-2024 ['Pedestrian crossing guidelines and right of way.'](https://legistar.council.nyc.gov/LegislationDetail.aspx?ID=6557803&GUID=7D6F4CEC-85C3-4E00-9E54-36641179493B&Options=&Search=)
 
 ***  
 
@@ -27,8 +27,11 @@ The data team analyzed citation and crash data from NYC and other cities in orde
 
 #### Main Takeaways
 ⁃	**Legalization in Denver, CO and Virginia Beach, VA had no impact on the predictions of the percentage of pedestrian collisions or the percentage of non-intersection pedestrian collisions each month.** We chose percentage of pedestrian collisions to avoid increases caused by weather or more cars being on the road on a given month. We assume that if the weather or more cars being on the road lead to more pedestrian collisions it would also lead to a similar number of non-pedestrian collisions. All of models revealed either no statistical significance or very small coefficients. 
+
 ⁃	**There is no relationship between the number of citations each quarter and the pedestrian-involved incidents to imply that giving more citations leads to less pedestrian incidents in NYC.**
+
 ⁃	**In NYC, there is a statistically significant moderate relationship between pedestrian KSI and jaywalking summons per 10,000 people per precinct.** 
+
 ⁃	**The number of citations in the previous quarter granger causes the pedestrian share of collisions in the next quarter. However this does not imply true causality. The effect is small and the model is not very predictive.** 
 
 
