@@ -21,7 +21,7 @@ Walking against traffic signals was decriminalized statewide in Virginia in Marc
 
 The data team analyzed citation and crash data from NYC and other cities in order to:
 - Test if legalization is a predictor of a change in pedestrian incidents in other cities
-- Identify if ticks are correlated to a decreased number of pedestrian collisions in NYC
+- Identify if tickets are correlated to a decreased number of pedestrian collisions in NYC
 - Evaluate the NYPD’s claim that they target neighborhoods with high pedestrian KSI with citations
 - Assess if the number of tickets given out is a predictor of the number of collisions in NYC
 
