@@ -4,11 +4,11 @@ Data analysis for Int 0346-2024 ['Pedestrian crossing guidelines and right of wa
 ***  
 
 #### Data Sources 
-- Traffic Accidents (Offenses), Denver Open Data Catalogue, Accessed July 31st 2024, [link](https://data.cityofnewyork.us/Transportation/Bus-Breakdown-and-Delays/ez4e-fazm)
+- Traffic Accidents (Offenses), Denver Open Data Catalogue, Accessed July 31st 2024, [link](https://opendata-geospatialdenver.hub.arcgis.com/datasets/db00bd99ea534d8987e0913a191ebe19_325/about)
 - Crash Data, Virginia Roads, Accessed August 1st 2024, [link](https://www.virginiaroads.org/maps/VDOT::crash-data-1/about)
 - Motor Vehicle Collisions - Person, New York City Open Data, Accessed TBD, [link](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Person/f55k-p6yu/about_data)
 - Motor Vehicle Collisions - Crashes, New York City Open Data, Accessed TBD, [link](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95/about_data)
-- NYPD Criminal Court Summons Incident Level Data (Year To Date), New York City Open Data, Accessed TBD, [link](https://data.cityofnewyork.us/Public-Safety/NYPD-Criminal-Court-Summons-Incident-Level-Data-Yea/8h9b-rp9u/about_data)
+- NYPD Criminal Court Summons Incident Level Data (Year To Date), New York City Open Data, Accessed TBD, [link](https://data.cityofnewyork.us/Public-Safety/NYPD-Criminal-Court-Summons-Incident-Level-Data-Ye/mv4k-y93f/about_data)
 - NYPD Criminal Court Summons Incident Level Data (Historic), New York City Open Data, Accessed TBD, [link](https://data.cityofnewyork.us/Public-Safety/NYPD-Criminal-Court-Summons-Historic-/sv2w-rv3k/about_data)
 
 
