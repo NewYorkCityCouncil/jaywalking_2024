@@ -1,0 +1,394 @@
+---
+title: "Untitled"
+output:
+  html_document: default
+  pdf_document: default
+date: "2024-02-06"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+library(ggiraph)
+library(plotly)
+library(knitr)
+library(gt)
+library(dplyr)
+library(councildown)
+library(htmlwidgets)
+library(classInt)
+library(leaflet)
+library(sf)
+```
+
+```{r}
+jaywalking_crim_summonses_quarterly <- read_csv('../data/output/jaywalking_crim_summonses_quarterly.csv')
+
+desired_number_of_ticks <- 10  # adjust this to the desired number of tick labels
+
+# extract unique quarters from the data
+unique_quarters <- unique(jaywalking_crim_summonses_quarterly$quarter)
+
+# calculate the positions of tick marks
+tick_positions <- seq(1, length(unique_quarters), length.out = desired_number_of_ticks)
+
+# specify the labels for tick marks
+tick_labels <- unique_quarters[tick_positions]
+
+plot <- ggplot(data = jaywalking_crim_summonses_quarterly, aes(x = quarter, y = total_summonses, group = 1)) +
+  geom_line() +
+  geom_point_interactive(aes(tooltip = total_summonses)) +
+  labs(x = "Quarter", y = "Summonses", title = "NYPD Criminal Summonses for Jaywalking Offenses") +
+  theme_nycc() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  scale_x_discrete(breaks = tick_labels)
+
+tooltip_css <- "background-color:#CACACA;"
+
+plot_interactive <- girafe(ggobj = plot,   
+                           width_svg = 9,
+                           height_svg = 5, 
+                           options = list(
+                             opts_tooltip(css = tooltip_css)
+                           )
+)
+
+plot_interactive
+
+htmlwidgets::saveWidget(plot_interactive, file = '../visuals/jaywalking_crim_summonses_quarterly.html')
+```
+
+```{r}
+jaywalking_white_v_nonwhite <- read_csv('../data/output/jaywalking_white_v_nonwhite.csv')
+
+desired_number_of_ticks <- 15  # adjust this to the desired number of tick labels
+
+# extract unique quarters from the data
+unique_quarters <- unique(jaywalking_crim_summonses_quarterly$quarter)
+
+# calculate the positions of tick marks
+tick_positions <- seq(1, length(unique_quarters), length.out = desired_number_of_ticks)
+
+# specify the labels for tick marks
+tick_labels <- unique_quarters[tick_positions]
+
+jaywalking_white_v_nonwhite <- jaywalking_white_v_nonwhite %>% 
+                        rename(
+                          percent_of_total = 'Percent of Total'
+                          )
+
+plot <- ggplot(jaywalking_white_v_nonwhite, aes(x = quarter, y = percent_of_total, colour = RACE, group = RACE)) +
+  geom_line() +
+  geom_point_interactive(aes(tooltip = percent_of_total)) +
+  labs(x = "Quarter", y = "% of Summonses", title = "Racial Breakdown of Jaywalking Criminal Summonses", color = "Race") +
+  theme_nycc() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  scale_x_discrete(breaks = tick_labels)
+
+tooltip_css <- "background-color:#CACACA;"
+
+plot_interactive <- girafe(ggobj = plot,   
+                           width_svg = 9,
+                           height_svg = 5, 
+                           options = list(
+                             opts_tooltip(css = tooltip_css)
+                           )
+)
+
+plot_interactive
+
+htmlwidgets::saveWidget(plot_interactive, file = '../visuals/jaywalking_white_v_nonwhite.html')
+```
+```{r}
+jaywalking_share_by_race <- read_csv('../data/output/jaywalking_share_by_race.csv')
+
+jaywalking_share_by_race <- jaywalking_share_by_race %>%
+  rename(
+    percent_of_total_summonses = "% of Total Summonses",
+    )
+
+jaywalking_share_by_race$RACE <- str_to_title(jaywalking_share_by_race$RACE)
+
+# reorder the levels of the race variable based on the total value
+jaywalking_share_by_race$RACE <- factor(jaywalking_share_by_race$RACE, 
+                         levels = jaywalking_share_by_race$RACE[order(jaywalking_share_by_race$percent_of_total_summonses, decreasing = TRUE)])
+
+# plot stacked bar graph
+gg_plot <- ggplot(jaywalking_share_by_race, aes(x = RACE, y = percent_of_total_summonses, text = paste("Race:", RACE, "<br>Percentage:", percent_of_total_summonses, "%"), fill = RACE)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Race", y = "Percentage (%)", title = "Share of Criminal Summonses Occupied by Jaywalking (2017-2023)", fill = 'Race') +
+  theme_nycc() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1), legend.position="none") 
+
+interactive_plot <- ggplotly(gg_plot, tooltip = "text")
+
+interactive_plot
+
+htmlwidgets::saveWidget(plot_interactive, file = '../visuals/jaywalking_share_by_race.html')
+```
+
+```{r}
+racial_breakdown_CJRA_vs_jaywalking <- read_csv('../data/output/racial_breakdown_CJRA_vs_jaywalking.csv')
+
+# Create a gt table 
+table <- racial_breakdown_CJRA_vs_jaywalking %>%
+  gt() %>%
+    cols_label(
+    RACE = "Race"
+  ) %>%
+  tab_header(
+    title = md("Racial Breakdown"),
+    subtitle = md("Types of Criminal Summonses by Race (2017-2023)")
+  )
+
+table
+
+gtsave(table, "../visuals/racial_breakdown_CJRA_vs_jaywalking.html")
+```
+```{r}
+# Create a gt table 
+table <- select(racial_breakdown_CJRA_vs_jaywalking, c('RACE', 'Jaywalking')) %>%
+  gt() %>%
+    cols_label(
+    RACE = "Race",
+    Jaywalking = 'Share of Summonses'
+  ) %>%
+  tab_header(
+    title = md("Racial Breakdown"),
+    subtitle = md("Jaywalking Summonses by Race (2017-2023)")
+  )
+
+table
+
+#gtsave(table, "../visuals/racial_breakdown_jaywalking.html")
+```
+
+```{r}
+disparities_top_jaywalking_summonses <- read_csv('../data/output/racial-disparities_precincts-w-top-jaywalking-summonses.csv')
+disparities_top_jaywalking_summonses <- disparities_top_jaywalking_summonses[,-1]
+
+# Create a gt table 
+table <- disparities_top_jaywalking_summonses %>%
+  gt() %>%
+    cols_label(
+    policeprct = "Precinct",
+    `Total Jaywalking Summonses` = 'Total Jaywalking Summonses',
+    `Non-White Jaywalking` = 'Non-White (Jaywalking Summonses)',
+    `Non-White Precinct` = 'Non-White (Precinct)',
+    `Absolute % Difference` = 'Disparity'
+    ) %>%
+  cols_move(
+    columns = vars('Total Jaywalking Summonses'),
+    after = vars(policeprct)
+  ) %>%
+  fmt_number(
+    columns = c(`Non-White Jaywalking`, `Non-White Precinct`, `Absolute % Difference`),
+    decimals = 1,
+    pattern = "{x}%"
+  ) %>%
+  tab_header(
+    title = md("Racial Disparities Among Top Precincts for Jaywalking Summonses"),
+    subtitle = md("Precincts with highest number of jaywalking summonses, ranked by racial disparity (2017-2023)")
+  )
+
+table
+
+gtsave(table, "../visuals/racial-disparities_precincts-w-top-jaywalking-summonses.html")
+```
+
+
+```{r}
+jaywalking_summonses_2023_by_precinct <- read_csv('../data/output/jaywalking_summonses_2023_by_precinct.csv')
+
+jaywalking_summonses_2023_by_precinct <- jaywalking_summonses_2023_by_precinct %>%
+  rename(
+    jaywalking_summonses_per_10K = "Jaywalking Summonses per 10K",
+    precinct = "PRECINCT_OF_OCCUR...1"
+    )
+
+# load shapefile
+precincts.shp <- read_sf('../data/input/Police Precincts/geo_export_150316f0-5d81-4529-8afe-e8553ed480d8.shp')
+
+# joinjaywalking summonses per person data with precinct shape file
+jaywalking_summonses_2023_by_precinct <- precincts.shp %>% 
+  left_join(jaywalking_summonses_2023_by_precinct, by=c("precinct"))
+
+# replace NAs with 0s
+jaywalking_summonses_2023_by_precinct[is.na(jaywalking_summonses_2023_by_precinct)] <- 0
+
+jaywalking_summonses_2023_by_precinct <- jaywalking_summonses_2023_by_precinct %>% 
+  st_as_sf() %>% st_transform('+proj=longlat +datum=WGS84')
+
+# check column distribution
+plot(density(jaywalking_summonses_2023_by_precinct$jaywalking_summonses_per_10K, na.rm = T))
+ hist(jaywalking_summonses_2023_by_precinct$jaywalking_summonses_per_10K, breaks = 20)
+# large skew, maybe jenks or head/tail classification
+
+int_prct <- classIntervals(jaywalking_summonses_2023_by_precinct$jaywalking_summonses_per_10K, n = 5, style = 'headtails')
+
+# create color palete
+pal = colorBin(
+  palette = nycc_pal(palette='blue')(7),
+  bins = round(int_prct$brks,2),
+  domain = jaywalking_summonses_2023_by_precinct$jaywalking_summonses_per_10K,
+  na.color = "#FFFFFF"
+)
+
+# prepare the text for tooltips:
+mytext <- paste(
+    "Precinct: ", jaywalking_summonses_2023_by_precinct$precinct,"<br/>", 
+    "Summonses per 10K: ", jaywalking_summonses_2023_by_precinct$jaywalking_summonses_per_10K, "<br/>", 
+    sep="") %>%
+  lapply(htmltools::HTML)
+
+# map 2023 jaywalking summonses per person by precinct
+
+m <- leaflet() %>%
+
+  addPolygons(data = jaywalking_summonses_2023_by_precinct,
+              weight = 1,
+              fillColor = ~pal(jaywalking_summonses_per_10K),
+              color="white",
+              stroke = TRUE,
+              fillOpacity = 1) %>%
+  addPolygons(data = jaywalking_summonses_2023_by_precinct, #%>% 
+              weight = 0.5,
+              color="Black",
+              stroke = TRUE,
+              label = mytext,
+              fillOpacity = 0) %>% 
+  addCouncilStyle() %>% 
+  addLegend_decreasing(position ="topleft",  
+             pal=pal, 
+             values = jaywalking_summonses_2023_by_precinct, 
+             title = "Jaywalking Summonses Per 10K (2023)", 
+             opacity = 1)
+
+m
+
+saveWidget(m, file = "../visuals/jaywalking_summonses_per10K_2023_by_precinct.html")
+```
+
+```{r}
+jaywalking_summonses_2023_by_precinct <- jaywalking_summonses_2023_by_precinct %>%
+  rename(
+    jaywalking_share_of_summonses = "Jaywalking % of Total Summonses",
+    )
+
+# check column distribution
+plot(density(jaywalking_summonses_2023_by_precinct$jaywalking_share_of_summonses, na.rm = T))
+ hist(jaywalking_summonses_2023_by_precinct$jaywalking_share_of_summonses, breaks = 20)
+# large skew, maybe jenks or head/tail classification
+
+int_prct <- classIntervals(jaywalking_summonses_2023_by_precinct$jaywalking_share_of_summonses, n = 5, style = 'headtails')
+
+# create color palette
+pal = colorBin(
+  palette = nycc_pal(palette='blue')(7),
+  bins = round(int_prct$brks,2),
+  domain = jaywalking_summonses_2023_by_precinct$jaywalking_share_of_summonses,
+  na.color = "#FFFFFF"
+)
+
+# prepare the text for tooltips:
+mytext <- paste(
+    "Precinct: ", jaywalking_summonses_2023_by_precinct$precinct,"<br/>", 
+    "Share of Total: ", jaywalking_summonses_2023_by_precinct$jaywalking_share_of_summonses, "<br/>", 
+    sep="") %>%
+  lapply(htmltools::HTML)
+
+# map 2023 jaywalking summonses per person by precinct
+
+m <- leaflet() %>%
+
+  addPolygons(data = jaywalking_summonses_2023_by_precinct,
+              weight = 1,
+              fillColor = ~pal(jaywalking_share_of_summonses),
+              color="white",
+              stroke = TRUE,
+              fillOpacity = 1) %>%
+  addPolygons(data = jaywalking_summonses_2023_by_precinct, #%>% 
+              weight = 0.5,
+              color="Black",
+              stroke = TRUE,
+              label = mytext,
+              fillOpacity = 0) %>% 
+  addCouncilStyle() %>% 
+  addLegend_decreasing(position ="topleft",  
+             pal=pal, 
+             values = jaywalking_summonses_2023_by_precinct, 
+             title = "Jaywalking Share of All<br>Criminal Summonses (2023)", 
+             opacity = 1)
+
+m
+
+saveWidget(m, file = "../visuals/jaywalking_share_of_summonses_2023_by_precinct.html")
+```
+```{r}
+merged_white_nonwhite_2017 <- read_csv('../data/output/jaywalking_merged_white_nonwhite_2017.csv')
+
+merged_white_nonwhite_2017 <- merged_white_nonwhite_2017 %>%
+  rename(
+    `Total Jaywalking Summonses` = 'Total Jaywalking Summonses',
+    `Non-White Jaywalking` = 'Non-White Jaywalking',
+    `Non-White Precinct` = 'Non-White Precinct',
+    `Absolute % Difference` = 'Absolute % Difference',
+    `Disproportionately` = 'Disproportionately'
+    )
+
+# Assuming merged_white_nonwhite_2017 is an sf object with geometry
+# Define map center and zoom level
+lat <- 40.7128  # Example latitude
+lon <- -74.0060  # Example longitude
+zoom <- 12  # Example zoom level
+
+# Define columns and aliases
+columns <- c('policeprct', 'Disproportionately', 'Absolute % Difference', 'Non-White Jaywalking', 'Non-White Precinct', 'Total Jaywalking Summonses')
+aliases <- c('Precinct', 'Disproportionately', 'Difference (%)', 'Non-White Share of Jaywalking Summonses (%)', 'Non-White Share of Population (%)', 'Total Jaywalking Summonses')
+
+# Calculate customized diverging bins
+negative_stats <- summary(merged_white_nonwhite_2017 %>% filter(`Non-White Difference` < 0) %>% pull(`Non-White Difference`))
+positive_stats <- summary(merged_white_nonwhite_2017 %>% filter(`Non-White Difference` > 0) %>% pull(`Non-White Difference`))
+
+diverging_palette <- c(negative_stats["Min."], negative_stats["1st Qu."], 
+                       negative_stats["Median"], negative_stats["3rd Qu."], 0, 
+                       positive_stats["1st Qu."], positive_stats["Median"], 
+                       positive_stats["3rd Qu."], positive_stats["Max."])
+
+# Create the leaflet map
+fig <- leaflet(data = merged_white_nonwhite_2017) %>%
+  addTiles() %>%
+  setView(lat = lat, lng = lon, zoom = zoom) %>%
+  addPolygons(
+    fillColor = ~colorBin("RdYlBu", `Non-White Difference`, bins = diverging_palette)(`Non-White Difference`),
+    fillOpacity = 0.7,
+    color = "white",
+    weight = 1,
+    opacity = 0.2,
+    highlightOptions = highlightOptions(weight = 2, color = "#666", fillOpacity = 0.7),
+    label = lapply(seq(nrow(merged_white_nonwhite_2017)), function(i) {
+      paste(
+        "Precinct: ", merged_white_nonwhite_2017$policeprct[i], "<br/>",
+        "Disproportionately: ", merged_white_nonwhite_2017$Disproportionately[i], "<br/>",
+        "Difference (%): ", merged_white_nonwhite_2017$`Absolute % Difference`[i], "<br/>",
+        "Non-White Share of Jaywalking Summonses (%): ", merged_white_nonwhite_2017$`Non-White Jaywalking`[i], "<br/>",
+        "Non-White Share of Population (%): ", merged_white_nonwhite_2017$`Non-White Precinct`[i], "<br/>",
+        "Total Jaywalking Summonses: ", merged_white_nonwhite_2017$`Total Jaywalking Summonses`[i]
+      )
+    }) %>% lapply(htmltools::HTML)
+  ) %>%
+  addLegend(
+    position = "topright",
+    pal = colorBin("RdYlBu", domain = merged_white_nonwhite_2017$`Non-White Difference`, bins = diverging_palette),
+    values = merged_white_nonwhite_2017$`Non-White Difference`,
+    title = "Non-White Share of Jaywalking Summonses<br>Subtracted by Non-White Share of Population (%)<br>(2017-2023)",
+    opacity = 1,
+    labFormat = labelFormat(suffix = "%")
+  )
+
+# Display the map
+fig
+```
+
