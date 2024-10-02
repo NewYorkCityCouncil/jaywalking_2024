@@ -36,4 +36,4 @@ The data team analyzed citation and crash data from NYC and other cities in orde
 
 
 #### Legislation
-In 2023 and again in 2024, City Council introduced legislation to decriminalize jaywalking, aiming to address the disproportionate enforcement of jaywalking citations, which city data shows are overwhelmingly issued to Black and Latino New Yorkers. The proposed bill, which passed the Transportation and Infrastructure Committee, sought to stop the NYPD from penalizing pedestrians for crossing streets outside of crosswalks. After further revisions, the Council has postponed a full vote, leaving the future of jaywalking decriminalization uncertain.
+In 2023 and again in 2024, City Council introduced legislation to decriminalize jaywalking, aiming to address the disproportionate enforcement of jaywalking citations, which city data shows are overwhelmingly issued to Black and Latino New Yorkers. The proposed bill, which passed the Transportation and Infrastructure Committee, seeks to stop the NYPD from penalizing pedestrians for crossing streets outside of crosswalks. 
